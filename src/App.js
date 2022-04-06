@@ -1,23 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from "react";
+import "./App.css";
+import SearchBox from "./components/searchBox";
+import { getGifs } from "./services/getGifs";
 
 function App() {
+  const [query, setQuery] = useState("maradona");
+  const [listOfGifs, setListOfGifs] = useState([]);
+
+  useEffect(() => {
+    const fetchGifs = async () => {
+      const result = await getGifs(query);
+      setListOfGifs(result);
+    };
+
+    fetchGifs();
+  }, [query]);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <SearchBox setQuery={setQuery} />
+      {listOfGifs.map((gif) => (
+        <article key={gif.id}>
+          <p style={{ color: "#5FD6F7" }}>{gif.name}</p>
+          <img src={gif.image} alt={gif.name} />
+        </article>
+      ))}
     </div>
   );
 }
